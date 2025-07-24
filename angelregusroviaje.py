@@ -21,3 +21,13 @@ def registrar_clientes(n, clientes):
     }
 
     return registrar_clientes(n - 1, clientes)
+
+def contar_destinos_recursivo(clientes, claves):
+    if not claves:
+        return 0
+
+    cliente_actual = clientes[claves[0]]
+    cantidad_actual = len(cliente_actual["destinos"])
+
+    return cantidad_actual + contar_destinos_recursivo(clientes, claves[1:])
+
