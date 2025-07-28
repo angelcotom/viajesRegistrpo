@@ -1,33 +1,55 @@
-def registrar_clientes(n, clientes):
-    if n == 0:
-        return clientes
 
-    codigo = input("Ingrese el código del cliente (ej: CL001): ")
+def contar_destinos(lista_codigos, clientes, i):
+    if i == len(lista_codigos):
+        return 0
+    return contar_destinos(lista_codigos, clientes, i + 1) + len(clientes[lista_codigos[i]]["destinos"])
+
+# encontrar al cliente con más destinos
+def cliente_con_mas_destinos(clientes):
+    mayor = ""
+    cantidad_mayor = 0
+    for datos in clientes.values():
+        cantidad = len(datos["destinos"])
+        if cantidad > cantidad_mayor:
+            cantidad_mayor = cantidad
+            mayor = datos["nombre"]
+    return mayor, cantidad_mayor
+
+# P
+clientes = {}
+n = int(input("¿Cuántos clientes desea ingresar? "))
+
+for i in range(n):
+    print(f"\nCliente #{i + 1}")
+    codigo = input("Ingrese el código del cliente: ")
     nombre = input("Ingrese el nombre del cliente: ")
 
-    destinos=[]
     while True:
-        destino = input(f"Ingrese un destino turistio para {nombre} (mínimo 1, máximo 5): ")
+        cantidad = int(input("¿Cuántos destinos desea registrar? (1 a 5): "))
+        if 1 <= cantidad <= 5:
+            break
+        print("Debe ingresar entre 1 y 5 destinos.")
+
+    destinos = []
+    for j in range(cantidad):
+        destino = input(f"Destino {j + 1}: ")
         destinos.append(destino)
-        if len(destinos) == 5:
-            break
-        otro = input("¿Desea ingresar otro destino? (s/n): ").lower()
-        if otro != 's' and len(destinos) >= 1:
-            break
 
-    clientes[codigo] = {
-        "nombre": nombre,
-        "destinos": destinos
-    }
+    clientes[codigo] = {"nombre": nombre, "destinos": destinos}
 
-    return registrar_clientes(n - 1, clientes)
+# Muestra resultado
+print("\n=== LISTADO DE CLIENTES Y DESTINOS VISITADOS ===")
+for codigo, datos in clientes.items():
+    print(f"\nCódigo: {codigo}")
+    print(f"Nombre: {datos['nombre']}")
+    print("Destinos:", ", ".join(datos["destinos"]))
 
-def contar_destinos_recursivo(clientes, claves):
-    if not claves:
-        return 0
+# Total de destino
+codigos = list(clientes.keys())
+total = contar_destinos(codigos, clientes, 0)
 
-    cliente_actual = clientes[claves[0]]
-    cantidad_actual = len(cliente_actual["destinos"])
 
-    return cantidad_actual + contar_destinos_recursivo(clientes, claves[1:])
+nombre_mayor, cantidad = cliente_con_mas_destinos(clientes)
 
+print(f"\nTotal de destinos registrados entre todos los clientes: {total}")
+print(f"Cliente con más destinos: {nombre_mayor} ({cantidad} destinos)")
